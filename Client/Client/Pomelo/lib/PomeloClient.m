@@ -226,6 +226,12 @@
 - (void)disconnectWithCallback:(PomeloCallback)callback{
     if (callback) {
         [_callBacks setObject:callback forKey:kPomeloCloseCallback];
+    }else{
+        //占位用  判断是否是用户自己断开的
+        PomeloCallback cb = ^(id arg){
+            
+        };
+        [_callBacks setObject:cb forKey:kPomeloCloseCallback];
     }
     [_webSocket close];
     
@@ -489,7 +495,6 @@
     if (self.delegate && [self respondsToSelector:@selector(pomeloDisconnect:withError:)]) {
         [self.delegate pomeloDisconnect:self withError:[NSError errorWithDomain:@"pomeloclient" code:code userInfo:nil]];
     }
-    
     [self disconnect];
 
 }
@@ -624,6 +629,12 @@
     PomeloCallback callback = [_callBacks objectForKey:kPomeloCloseCallback];
     if(callback) {
         callback(self);
+    }else{
+        if (self.delegate && [self respondsToSelector:@selector(pomeloDisconnect:withError:)]) {
+            [self.delegate pomeloDisconnect:self withError:[NSError errorWithDomain:@"pomeloclient" code:code userInfo:nil]];
+        }
     }
+    
+    
 }
 @end
