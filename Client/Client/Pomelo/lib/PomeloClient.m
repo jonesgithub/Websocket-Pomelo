@@ -226,13 +226,8 @@
 - (void)disconnectWithCallback:(PomeloCallback)callback{
     if (callback) {
         [_callBacks setObject:callback forKey:kPomeloCloseCallback];
-    }else{
-        //占位用  判断是否是用户自己断开的
-        PomeloCallback cb = ^(id arg){
-            
-        };
-        [_callBacks setObject:cb forKey:kPomeloCloseCallback];
     }
+    
     [_webSocket close];
     
     if (_heartbeatId) {
@@ -493,7 +488,7 @@
 
 - (void)handleErrorcode:(ResCode)code{
     
-    if (self.delegate && [self respondsToSelector:@selector(pomeloDisconnect:withError:)]) {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pomeloDisconnect:withError:)]) {
         [self.delegate pomeloDisconnect:self withError:[NSError errorWithDomain:@"pomeloclient" code:code userInfo:nil]];
     }
     [self disconnect];
@@ -624,6 +619,9 @@
 }
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error{
     DEBUGLOG(@"error:%@",error);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pomeloDisconnect:withError:)]) {
+        [self.delegate pomeloDisconnect:self withError:error];
+    }
 }
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean{
     DEBUGLOG(@"close code :%d   reason:%@  wasClean:%d",code,reason,wasClean);
@@ -631,12 +629,7 @@
     if(callback) {
         callback(self);
         [_callBacks removeObjectForKey:kPomeloCloseCallback];
-    }else{
-        if (self.delegate && [self respondsToSelector:@selector(pomeloDisconnect:withError:)]) {
-            [self.delegate pomeloDisconnect:self withError:[NSError errorWithDomain:@"pomeloclient" code:code userInfo:nil]];
-        }
     }
-    
     
 }
 @end
