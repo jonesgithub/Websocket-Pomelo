@@ -634,7 +634,7 @@
             [self.delegate pomeloDisconnect:self withError:[NSError errorWithDomain:@"pomeloclient" code:code userInfo:nil]];
         }
     }
-    
+    [_callBacks removeAllObjects];
     
 }
 @end
