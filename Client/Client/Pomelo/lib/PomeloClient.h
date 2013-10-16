@@ -25,6 +25,7 @@ typedef enum{
 
 @protocol PomeloClientDelegate <NSObject>
 
+@optional
 /**
  *  用户自定义的加密
  *
@@ -44,6 +45,12 @@ typedef enum{
  */
 - (NSData *)pomeloClientDecodeWithData:(NSData *)data;
 
+/**
+ *  连接成功后的回调
+ *
+ *  @param pomelo PomeloClient
+ */
+- (void)pomeloDidConnect:(PomeloClient *)pomelo;
 
 
 /**
@@ -80,7 +87,7 @@ typedef enum{
      *  心跳超时时间间隔
      */
     NSTimeInterval _heartbeatTimeout;
-
+    
     /**
      *  心跳超时标识
      */

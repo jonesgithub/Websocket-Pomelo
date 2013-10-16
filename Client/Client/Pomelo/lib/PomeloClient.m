@@ -354,6 +354,10 @@
         
         NSData *handshakeAck = [PomeloProtocol packageEncodeWithType:PackageTypeHandshakeAck andBody:nil];
         [self send:handshakeAck];
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(pomeloDidConnect:)]) {
+            [self.delegate pomeloDidConnect:self];
+        }
         PomeloCallback handCb = [_callBacks objectForKey:kPomeloHandshakeCallback];
         if (handCb) {
             handCb(self);
